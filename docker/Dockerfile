@@ -66,4 +66,10 @@ RUN cd /var/www && \
     chown -R www-data:www-data * && \
     chmod -R o+w app
 
+ENV NVM_DIR="/root/.nvm"
+ENV NODE_VERSION=20
+RUN echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc \
+    && echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use' >> ~/.bashrc \
+    && echo 'nvm use $NODE_VERSION' >> ~/.bashrc
+
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
