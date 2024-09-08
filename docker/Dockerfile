@@ -45,7 +45,7 @@ RUN cd $APP_DIR
 RUN chown www-data:www-data $APP_DIR
 
 COPY --chown=www-data:www-data ./app .
-RUN rm -rf vendor
+RUN rm -rf vendor && rm -rf package-lock.json && rm -rf composer.lock
 RUN composer install --no-interaction
 
 RUN apt-get install nginx -y
@@ -55,5 +55,15 @@ COPY ./docker/nginx/error.html /var/www/html/error.html
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN apt update -y && apt install nano git -y
+
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
+    && export NVM_DIR="$HOME/.nvm" \
+    && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" \
+    && nvm install 20 \
+    && nvm use 20
+
+RUN cd /var/www && \
+    chown -R www-data:www-data * && \
+    chmod -R o+w app
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
