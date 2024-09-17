@@ -1,0 +1,26 @@
+version: "3.3"
+services:
+  web:
+    image: ricardoperovano/laravel
+    container_name: web
+    env_file:
+      - ./app/.env
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      args:
+        PHP_VERSION: "8.2.4-fpm-bullseye"
+    volumes:
+      - ./app:/var/www/app
+      - ./app/resources:/var/www/app/resources
+      - ./app/config:/var/www/app/config
+      - ./app/routes:/var/www/app/routes
+      - ./app/storage:/var/www/app/storage
+      - ./app/public:/var/www/app/public
+    networks:
+      - app-network
+    ports:
+      - "8001:80" #http
+networks:
+  app-network:
+    driver: bridge
